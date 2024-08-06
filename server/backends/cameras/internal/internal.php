@@ -38,6 +38,7 @@ namespace backends\cameras
 
             $cameras = $this->db->get($q, $p, [
                 "camera_id" => "cameraId",
+                "camera_uuid" => "cameraUuid",
                 "enabled" => "enabled",
                 "model" => "model",
                 "url" => "url",
@@ -111,7 +112,7 @@ namespace backends\cameras
         /**
          * @inheritDoc
          */
-        public function addCamera($enabled, $model, $url,  $stream, $credentials, $name, $dvrStream, $timezone, $lat, $lon, $direction, $angle, $distance, $frs, $mdLeft, $mdTop, $mdWidth, $mdHeight, $common, $comments, $sound)
+        public function addCamera($enabled, $model, $url,  $stream, $credentials, $name, $dvrStream, $timezone, $lat, $lon, $direction, $angle, $distance, $frs, $mdLeft, $mdTop, $mdWidth, $mdHeight, $common, $comments, $sound, $cameraUuid)
         {
             if (!$model) {
                 return false;
@@ -132,7 +133,8 @@ namespace backends\cameras
                 return false;
             }
 
-            $cameraId = $this->db->insert("insert into cameras (enabled, model, url, stream, credentials, name, dvr_stream, timezone, lat, lon, direction, angle, distance, frs, md_left, md_top, md_width, md_height, common, comments, sound) values (:enabled, :model, :url, :stream, :credentials, :name, :dvr_stream, :timezone, :lat, :lon, :direction, :angle, :distance, :frs, :md_left, :md_top, :md_width, :md_height, :common, :comments, :sound)", [
+            $cameraId = $this->db->insert("insert into cameras (camera_uuid, enabled, model, url, stream, credentials, name, dvr_stream, timezone, lat, lon, direction, angle, distance, frs, md_left, md_top, md_width, md_height, common, comments, sound) values (:camera_uuid, :enabled, :model, :url, :stream, :credentials, :name, :dvr_stream, :timezone, :lat, :lon, :direction, :angle, :distance, :frs, :md_left, :md_top, :md_width, :md_height, :common, :comments, :sound)", [
+                "camera_uuid" => $cameraUuid,
                 "enabled" => (int)$enabled,
                 "model" => $model,
                 "url" => $url,
@@ -169,7 +171,7 @@ namespace backends\cameras
         /**
          * @inheritDoc
          */
-        public function modifyCamera($cameraId, $enabled, $model, $url, $stream, $credentials, $name, $dvrStream, $timezone, $lat, $lon, $direction, $angle, $distance, $frs, $mdLeft, $mdTop, $mdWidth, $mdHeight, $common, $comments, $sound)
+        public function modifyCamera($cameraId, $enabled, $model, $url, $stream, $credentials, $name, $dvrStream, $timezone, $lat, $lon, $direction, $angle, $distance, $frs, $mdLeft, $mdTop, $mdWidth, $mdHeight, $common, $comments, $sound, $cameraUuid)
         {
             if (!checkInt($cameraId)) {
                 setLastError("noId");
@@ -193,7 +195,8 @@ namespace backends\cameras
                 return false;
             }
 
-            $r = $this->db->modify("update cameras set enabled = :enabled, model = :model, url = :url, stream = :stream, credentials = :credentials, name = :name, dvr_stream = :dvr_stream, timezone = :timezone, lat = :lat, lon = :lon, direction = :direction, angle = :angle, distance = :distance, frs = :frs, md_left = :md_left, md_top = :md_top, md_width = :md_width, md_height = :md_height, common = :common, comments = :comments, sound = :sound where camera_id = $cameraId", [
+            $r = $this->db->modify("update cameras set camera_uuid = :camera_uuid, enabled = :enabled, model = :model, url = :url, stream = :stream, credentials = :credentials, name = :name, dvr_stream = :dvr_stream, timezone = :timezone, lat = :lat, lon = :lon, direction = :direction, angle = :angle, distance = :distance, frs = :frs, md_left = :md_left, md_top = :md_top, md_width = :md_width, md_height = :md_height, common = :common, comments = :comments, sound = :sound where camera_id = $cameraId", [
+                "camera_uuid" => $cameraUuid,
                 "enabled" => (int)$enabled,
                 "model" => $model,
                 "url" => $url,
